@@ -20,8 +20,8 @@ end
 %% Node Dependencies
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-node1 -->|Does something| node2
-node2 -->|Does another thing| node4
+node1 -->|A flow in one direction| node2
+node2 <-->|A bidirectional Flow| node3
 ```
 
 # Mermaid Docs
