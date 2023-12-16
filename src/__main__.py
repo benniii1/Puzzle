@@ -9,8 +9,23 @@ def main():
 
     :return:
     """
+
+    """
+    Loguru Log Levels:
+    
+    | Level name | Severity value | Logger method    |
+    |------------|----------------|------------------|
+    | TRACE      | 5              | logger.trace()   |
+    | DEBUG      | 10             | logger.debug()   |
+    | INFO       | 20             | logger.info()    |
+    | SUCCESS    | 25             | logger.success() |
+    | WARNING    | 30             | logger.warning() |
+    | ERROR      | 40             | logger.error()   |
+    | CRITICAL   | 50             | logger.critical()|
+    """
     logger.remove()  # Removes the default handler, so that we can set a log level without duplicating messages.
     logger.add(sink=stderr, level="DEBUG")  # Configures the log handler.
+
     logger.info("Let's start!")
 
     n = Node(parent=None,
@@ -21,6 +36,7 @@ def main():
              ])
 
     n.pretty_print_puzzle()
+    logger.debug(f"Is root? {n.is_root_node()}")
 
 
 main()
