@@ -1,3 +1,4 @@
+import numpy as np
 from loguru import logger
 
 
@@ -14,25 +15,36 @@ class Node:
     puzzle:
         The puzzle with the size of [3][3], which needs to be solved.
         It can contain numbers from 0-8, where 0 is an empty field and the other numbers are values.
-
-        Example:
-             [0, 1, 2],
-             [3, 4, 5],
-             [6, 7, 8]
     """
-    def __init__(self, parent=None, children=None, puzzle=None):
+
+    _is_root_assigned = False
+
+    def __init__(self, parent=None, children=None):
+        if parent is None and Node._is_root_assigned:
+            raise ValueError("Only one node can be root!")
+
         self.parent = parent
         self.children = children
-        self.puzzle = puzzle
+        self.puzzle = self.__create_random_puzzle()
 
-    def __str__(self):
-        return str(self.__dict__)
+        if self.is_root():
+            Node._is_root_assigned = True
+
+    @staticmethod
+    def __create_random_puzzle():
+        rng = np.random.default_rng()
+
+        numbers = np.arange(9)
+        rng.shuffle(numbers)
+
+        puzzle = np.reshape(numbers, (3, 3))
+        return puzzle
 
     def pretty_print_puzzle(self):
         for line in self.puzzle:
-            logger.debug(line)
+            print(line)
 
-    def is_root_node(self):
+    def is_root(self):
         if self.parent is None:
             return True
         else:

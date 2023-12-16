@@ -28,15 +28,10 @@ def main():
 
     logger.info("Let's start!")
 
-    n = Node(parent=None,
-             puzzle=[
-                 [0, 1, 2],
-                 [3, 4, 5],
-                 [6, 7, 8]
-             ])
+    n = Node()
 
     n.pretty_print_puzzle()
-    logger.debug(f"Is root? {n.is_root_node()}")
+    logger.debug(f"Is root? {n.is_root()}")
 
 
 main()
