@@ -31,7 +31,8 @@ def main():
     n = Node()
 
     n.pretty_print_puzzle()
-    logger.debug(f"Is root? {n.is_root()}")
+    logger.debug(f"Is Root: {n.is_root()}")
+    logger.debug(f"Hamming Distance: {n.hamming_distance}")
 
 
 main()

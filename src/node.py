@@ -18,6 +18,7 @@ class Node:
     """
 
     _is_root_assigned = False
+    hamming_distance = 0
 
     def __init__(self, parent=None, children=None):
         if parent is None and Node._is_root_assigned:
@@ -26,6 +27,7 @@ class Node:
         self.parent = parent
         self.children = children
         self.puzzle = self.__create_random_puzzle()
+        self.update_hamming_distance()
 
         if self.is_root():
             Node._is_root_assigned = True
@@ -49,3 +51,7 @@ class Node:
             return True
         else:
             return False
+
+    def update_hamming_distance(self):
+        sorted_puzzle = np.reshape(np.arange(9), (3, 3))
+        self.hamming_distance = np.count_nonzero(self.puzzle != sorted_puzzle)
