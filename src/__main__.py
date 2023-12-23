@@ -39,6 +39,7 @@ def main():
     logger.debug(f"Is Root: {n.is_root()}")
     logger.debug("Puzzle:")
     pretty_log_puzzle(n.puzzle)
+    logger.debug(f"Is Solvable: {n.is_puzzle_solvable()}")
     logger.debug("-" * 20)
     logger.debug("-" * 20)
 
@@ -49,6 +50,7 @@ def main():
     logger.debug(f"Hamming Distance: {hn.get_hamming_distance()}")
     logger.debug("Puzzle:")
     pretty_log_puzzle(hn.puzzle)
+    logger.debug(f"Is Solvable: {hn.is_puzzle_solvable()}")
     logger.debug("-" * 20)
     logger.debug("-" * 20)
 
