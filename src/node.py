@@ -52,7 +52,26 @@ class Node(object):
             return False
 
     def is_puzzle_solvable(self) -> bool:
-        raise NotImplementedError()
+        inversions: int = 0
+
+        for n in range(self.puzzle.size):
+            a: int = self.puzzle.flatten()[n].item()
+
+            if a == 0:
+                continue
+
+            for m in range(n+1, self.puzzle.size):
+                b: int = self.puzzle.flatten()[m].item()
+                if b == 0:
+                    continue
+
+                if a > b:
+                    inversions += 1
+
+        if inversions % 2 == 0:
+            return True
+        else:
+            return False
 
     @abstractmethod
     def create_search_tree(self) -> None:
