@@ -11,9 +11,6 @@ __pycache__/
 .AppleDouble
 .LSOverride
 
-# package
-.idea/
-
 # Distribution / packaging
 .Python
 build/
