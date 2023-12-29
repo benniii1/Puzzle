@@ -1,5 +1,7 @@
 import numpy as np
 import heapq
+import time
+from memory_profiler import profile, memory_usage
 from puzzle.generate_matrix import GenerateMatrix
 from puzzle.solvability import is_solvable
 from puzzle.heuristic_functions import HeuristicFunctions
@@ -14,6 +16,8 @@ class Puzzle:
         self.cost = cost
 
     def __lt__(self, other):
+        if np.isnan(self.cost) or np.isnan(other.cost):
+            return False
         return self.cost < other.cost
 
     def __eq__(self, other):
@@ -35,9 +39,11 @@ class Puzzle:
         return successors
 
     def calculate_cost(self, heuristic_function, goal_state):
-        return self.depth + heuristic_function(self.state, goal_state)
+        cost = self.depth + heuristic_function(self.state, goal_state)
+        return cost if not np.isnan(cost) and np.isfinite(cost) else 0.0
 
 
+@profile
 def a_star_search(initial_state, goal_state, heuristic_function):
     initial_puzzle = Puzzle(initial_state)
     goal_puzzle = Puzzle(goal_state)
@@ -54,7 +60,7 @@ def a_star_search(initial_state, goal_state, heuristic_function):
             while current_puzzle:
                 path.append((current_puzzle.state, current_puzzle.move))
                 current_puzzle = current_puzzle.parent
-            # print('path', path)
+            print("Number of Nodes Expanded:", len(closed_set))
             return path[::-1]
 
         successors = current_puzzle.generate_successors()
@@ -68,33 +74,83 @@ def a_star_search(initial_state, goal_state, heuristic_function):
 
 
 if __name__ == '__main__':
-    # Generate the random and goal states
-    random_state = GenerateMatrix.generate_random_state()
+    # Generate the goal states
     goal_state = GenerateMatrix.generate_goal_state()
 
-    print("Random State:")
-    print(random_state)
-    print()
-    print("Goal State:")
-    print(goal_state)
+    manhattan_memory_usage = []
+    hamming_memory_usage = []
 
-    is_state_solvable = is_solvable(random_state)
-    print("\nIs the random state solvable?", is_state_solvable)
-    print()
+    manhattan_execution_time = []
+    hamming_execution_time = []
 
-    if is_solvable(random_state):
-        manhattan_dist_path = a_star_search(random_state, goal_state, HeuristicFunctions.manhattan_distance)
-        print("A* Search with Manhattan Distance Heuristic:")
-        for state, move in manhattan_dist_path:
-            print("Move:", move)
-            print(state)
-            print()
+    for _ in range(100):
+        random_state = GenerateMatrix.generate_random_state()
 
-        hamming_displacement_path = a_star_search(random_state, goal_state, HeuristicFunctions.hamming_displacement)
-        print("\nA* Search with Hamming Distance Heuristic:")
-        for state, move in hamming_displacement_path:
-            print("Move:", move)
-            print(state)
-            print()
-    else:
-        print("The random state is not solvable.")
+        print("Random State:")
+        print(random_state)
+        print()
+        print("Goal State:")
+        print(goal_state)
+
+        is_state_solvable = is_solvable(random_state)
+        print("\nIs the random state solvable?", is_state_solvable)
+        print()
+
+        if is_solvable(random_state):
+            # A* Search with Manhattan Distance Heuristic
+            print("A* Search with Manhattan Distance Heuristic:")
+            manhattan_start_time = time.time()
+            manhattan_dist_path = a_star_search(random_state, goal_state, HeuristicFunctions.manhattan_distance)
+            manhattan_end_time = time.time()
+            manhattan_total_time = manhattan_end_time - manhattan_start_time
+            manhattan_execution_time.append(manhattan_total_time)
+
+            print("Run Time:", manhattan_total_time, "seconds\n")
+
+            manhattan_memory_used = memory_usage(
+                (a_star_search, (random_state, goal_state, HeuristicFunctions.manhattan_distance)))
+
+            manhattan_memory_usage.append(max(manhattan_memory_used))
+
+            print("Memory Used:", max(manhattan_memory_used), "MB")
+
+            for state, move in manhattan_dist_path:
+                print("Move:", move)
+                print(state)
+                print()
+
+            # A* Search with Hamming Distance Heuristic
+            print("\nA* Search with Hamming Distance Heuristic:")
+            hamming_start_time = time.time()
+            hamming_displacement_path = a_star_search(random_state, goal_state, HeuristicFunctions.hamming_displacement)
+            hamming_end_time = time.time()
+            hamming_total_time = hamming_end_time - hamming_start_time
+
+            print("Run Time:", hamming_total_time, "seconds\n")
+
+            # Calculate memory usage
+            hamming_memory_used = memory_usage(
+                (a_star_search, (random_state, goal_state, HeuristicFunctions.hamming_displacement)))
+
+            hamming_memory_usage.append(max(hamming_memory_used))
+
+            print("Memory Used:", max(hamming_memory_used), "MB")
+
+            for state, move in hamming_displacement_path:
+                print("Move:", move)
+                print(state)
+                print()
+        else:
+            print("The random state is not solvable.\n")
+
+    print("\nMean Memory Usage (Manhattan Distance Heuristic):", np.mean(manhattan_memory_usage), "MB")
+    print("Standard Deviation of Memory Usage (Manhattan Distance Heuristic):", np.std(manhattan_memory_usage), "MB")
+    print("Mean Execution Time (Manhattan Distance Heuristic):", np.mean(manhattan_execution_time), "seconds")
+    print("Standard Deviation of Execution Time (Manhattan Distance Heuristic):", np.std(manhattan_execution_time),
+          "seconds\n")
+
+    print("\nMean Memory Usage (Hamming Distance Heuristic):", np.mean(hamming_memory_usage), "MB")
+    print("Standard Deviation of Memory Usage (Hamming Distance Heuristic):", np.std(hamming_memory_usage), "MB")
+    print("Mean Execution Time (Hamming Distance Heuristic):", np.mean(hamming_execution_time), "seconds")
+    print("Standard Deviation of Execution Time (Hamming Distance Heuristic):", np.std(hamming_execution_time),
+          "seconds\n")
