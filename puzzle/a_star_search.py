@@ -9,6 +9,7 @@ from puzzle.heuristic_functions import HeuristicFunctions
 
 class Puzzle:
     def __init__(self, state, parent=None, move=None, depth=0, cost=0):
+        # Initializes a Puzzle object with the given state, parent, move, depth, and cost
         self.state = state
         self.parent = parent
         self.move = move
@@ -16,14 +17,17 @@ class Puzzle:
         self.cost = cost
 
     def __lt__(self, other):
+        # Compares two Puzzle objects based on their cost for heap operations in A* search
         if np.isnan(self.cost) or np.isnan(other.cost):
             return False
         return self.cost < other.cost
 
     def __eq__(self, other):
+        # Checks if two Puzzle objects are equal based on their state
         return np.array_equal(self.state, other.state)
 
     def generate_successors(self):
+        # Generates the next stage of Puzzle objects by moving the empty space in valid directions
         successors = []
         empty_space = np.argwhere(self.state == 0)[0]
 
@@ -39,12 +43,14 @@ class Puzzle:
         return successors
 
     def calculate_cost(self, heuristic_function, goal_state):
+        #Calculates the cost of the current state based on the given heuristic function and the goal state
         cost = self.depth + heuristic_function(self.state, goal_state)
         return cost if not np.isnan(cost) and np.isfinite(cost) else 0.0
 
 
 @profile
 def a_star_search(initial_state, goal_state, heuristic_function):
+    #Performs A* search to find the path from the initial state to the goal state using the given heuristic function
     initial_puzzle = Puzzle(initial_state)
     goal_puzzle = Puzzle(goal_state)
 
