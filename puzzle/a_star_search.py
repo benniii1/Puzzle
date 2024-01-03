@@ -1,10 +1,7 @@
 import numpy as np
 import heapq
-import time
-from memory_profiler import profile, memory_usage
-from puzzle.generate_matrix import GenerateMatrix
-from puzzle.solvability import is_solvable
-from puzzle.heuristic_functions import HeuristicFunctions
+from loguru import logger
+#from memory_profiler import profile, memory_usage
 
 
 class Puzzle:
@@ -43,7 +40,7 @@ class Puzzle:
         return cost if not np.isnan(cost) and np.isfinite(cost) else 0.0
 
 
-@profile
+#@profile
 def a_star_search(initial_state, goal_state, heuristic_function):
     initial_puzzle = Puzzle(initial_state)
     goal_puzzle = Puzzle(goal_state)
@@ -60,7 +57,7 @@ def a_star_search(initial_state, goal_state, heuristic_function):
             while current_puzzle:
                 path.append((current_puzzle.state, current_puzzle.move))
                 current_puzzle = current_puzzle.parent
-            print("Number of Nodes Expanded:", len(closed_set))
+            logger.debug(f"Number of Nodes Expanded: {len(closed_set)}")
             return path[::-1]
 
         successors = current_puzzle.generate_successors()
