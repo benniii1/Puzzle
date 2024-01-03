@@ -6,6 +6,9 @@ from puzzle.solvability import is_solvable
 class HeuristicFunctions:
     @staticmethod
     def manhattan_distance(state, goal) -> int:
+        """
+        Calculates the Manhattan Distance heuristic between the original state and the goal state
+        """
         distance = 0
         h = ""
         for i in range(3):
@@ -20,7 +23,7 @@ class HeuristicFunctions:
     @staticmethod
     def hamming_displacement(state, goal) -> int:
         """
-        Calculate the number of misplaced tiles heuristic between two states.
+        Calculates the number of misplaced tiles heuristic (Hamming Distance) between two states
         """
         misplaced_tiles_count = 0
         for row in range(3):
@@ -31,7 +34,7 @@ class HeuristicFunctions:
 
 
 if __name__ == '__main__':
-    # Generate the random and goal states
+    # Generates the random state and goal state
     random_state = GenerateMatrix.generate_random_state()
     goal_state = GenerateMatrix.generate_goal_state()
 
