@@ -3,7 +3,7 @@ import numpy as np
 
 class GenerateMatrix:
     @staticmethod
-    def generate_goal_state():
+    def generate_goal_state() -> np.ndarray:
         goal_matrix = np.arange(9).reshape((3, 3))
         return goal_matrix
 
