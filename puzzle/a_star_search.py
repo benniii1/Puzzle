@@ -1,7 +1,6 @@
 import numpy as np
 import heapq
 from loguru import logger
-#from memory_profiler import profile, memory_usage
 
 
 class Puzzle:
@@ -40,7 +39,6 @@ class Puzzle:
         return cost if not np.isnan(cost) and np.isfinite(cost) else 0.0
 
 
-#@profile
 def a_star_search(initial_state, goal_state, heuristic_function):
     initial_puzzle = Puzzle(initial_state)
     goal_puzzle = Puzzle(goal_state)

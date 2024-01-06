@@ -1,4 +1,6 @@
 from sys import stderr
+from typing import Any, List
+
 import numpy as np
 from loguru import logger
 import time
@@ -7,7 +9,7 @@ from puzzle.a_star_search import a_star_search
 from puzzle.generate_matrix import GenerateMatrix
 from puzzle.solvability import is_solvable
 from puzzle.heuristic_functions import HeuristicFunctions
-from memory_profiler import profile, memory_usage
+from memory_profiler import memory_usage
 
 
 def main():
@@ -40,14 +42,15 @@ def main():
     logger.debug("Goal State:")
     pretty_log_puzzle(goal_state)
 
-    #    manhattan_memory_usage = []
-    #    hamming_memory_usage = []
-
     count_solvable_puzzles: int = 0
-    manhattan_time_total: int = 0
-    hamming_time_total: int = 0
+    manhattan_time_total: List[float] = []
+    hamming_time_total: List[float] = []
+    manhattan_memory_total: List[Any] = []
+    hamming_memory_total: List[Any] = []
     for _ in range(100):
+        logger.info("-" * 40)
         logger.info(f"Run #{_}")
+        logger.info("-" * 40)
         logger.info("-" * 40)
 
         random_state: np.ndarray = GenerateMatrix.generate_random_state()
@@ -61,47 +64,49 @@ def main():
         if is_solvable(random_state):
             count_solvable_puzzles += 1
             logger.info("A* Search with Manhattan Distance Heuristic")
+            logger.info("-" * 40)
 
             manhattan_start_time = time.time()
-            manhattan_dist_path = a_star_search(random_state, goal_state, HeuristicFunctions.manhattan_distance)
+
+            # Calculate memory usage and get result
+            manhattan_memory, manhattan_dist_path = memory_usage(
+                (a_star_search, (random_state, goal_state, HeuristicFunctions.manhattan_distance)), retval=True)
+
             manhattan_end_time = time.time()
+
             manhattan_time = manhattan_end_time - manhattan_start_time
-            manhattan_time_total += manhattan_time
+            manhattan_time_total.append(manhattan_time)
 
             logger.info(f"Run Time: {manhattan_time}s")
 
-            """
-            # Calculate memory usage
-            manhattan_memory_used = memory_usage(
-                (a_star_search, (random_state, goal_state, HeuristicFunctions.manhattan_distance)))
-
-            manhattan_memory_usage.append(max(manhattan_memory_used))
+            manhattan_memory_total.append(max(manhattan_memory))
            
-            logger.debug(f"Memory Used: {max(manhattan_memory_used)}MB")
-            """
+            logger.info(f"Memory Used: {max(manhattan_memory)}MB")
 
             for state, move in manhattan_dist_path:
                 logger.debug(f"Move: {move}")
                 pretty_log_puzzle(state)
 
+            logger.info("-" * 40)
             logger.info("A* Search with Hamming Distance Heuristic")
+            logger.info("-" * 40)
+
             hamming_start_time = time.time()
-            hamming_displacement_path = a_star_search(random_state, goal_state, HeuristicFunctions.hamming_displacement)
+
+            # Calculate memory usage
+            hamming_memory, hamming_displacement_path = memory_usage(
+                (a_star_search, (random_state, goal_state, HeuristicFunctions.hamming_displacement)), retval=True)
+
             hamming_end_time = time.time()
+
             hamming_time = hamming_end_time - hamming_start_time
-            hamming_time_total += hamming_time
+            hamming_time_total.append(hamming_time)
 
             logger.info(f"Run Time: {hamming_time}s")
 
-            """
-            # Calculate memory usage
-            hamming_memory_used = memory_usage(
-                (a_star_search, (random_state, goal_state, HeuristicFunctions.hamming_displacement)))
+            hamming_memory_total.append(max(hamming_memory))
 
-            hamming_memory_usage.append(max(hamming_memory_used))
-
-            logger.debug(f"Memory Used: {max(hamming_memory_used)}MB")
-            """
+            logger.info(f"Memory Used: {max(hamming_memory)}MB")
 
             for state, move in hamming_displacement_path:
                 logger.debug(f"Move: {move}")
@@ -111,25 +116,29 @@ def main():
 
     logger.info("-" * 40)
     logger.info("-" * 40)
+    logger.info("-" * 15 + " Summary " + "-" * 16)
+    logger.info("-" * 40)
+    logger.info("-" * 40)
     logger.info(f"Solvable Puzzles: {count_solvable_puzzles}")
-    logger.info(f"Manhattan Time Total: {manhattan_time_total}s")
-    logger.info(f"Hamming Time Total: {hamming_time_total}s")
+    logger.info(f"Execution Time (Total): {np.sum(manhattan_time_total + hamming_time_total)}s")
+    logger.info("-" * 40)
 
+    if count_solvable_puzzles > 0:
+        logger.info("Manhattan Distance")
+        logger.info(f"Execution Time (Total): {np.sum(manhattan_time_total)}s")
+        logger.info(f"Execution Time (Mean): {np.mean(manhattan_time_total)}s")
+        logger.info(f"Execution Time (Standard Deviation): {np.std(manhattan_time_total)}s")
+        logger.info(f"Memory Usage (Mean): {np.mean(manhattan_memory_total)}MB")
+        logger.info(f"Memory Usage (Standard Deviation): {np.std(manhattan_memory_total)}MB")
 
-"""
-    logger.debug(f"Mean Memory Usage (Manhattan Distance Heuristic): {np.mean(manhattan_memory_usage)}MB")
-    logger.debug(f"Standard Deviation of Memory Usage (Manhattan Distance Heuristic): {np.std(manhattan_memory_usage)}"
-                 f"MB")
-    logger.debug(f"Mean Execution Time (Manhattan Distance Heuristic): {np.mean(manhattan_execution_time)}s")
-    logger.debug(f"Standard Deviation of Execution Time (Manhattan Distance Heuristic): "
-                 f"{np.std(manhattan_execution_time)}s")
+        logger.info("-" * 40)
 
-    logger.debug(f"Mean Memory Usage (Hamming Distance Heuristic): {np.mean(hamming_memory_usage)}MB")
-    logger.debug(f"Standard Deviation of Memory Usage (Hamming Distance Heuristic): {np.std(hamming_memory_usage)}MB")
-    logger.debug("Mean Execution Time (Hamming Distance Heuristic):", np.mean(hamming_execution_time), "seconds")
-    logger.debug(f"Standard Deviation of Execution Time (Hamming Distance Heuristic): "
-                 f"{np.std(hamming_execution_time)}s")
-"""
+        logger.info("Hamming Distance")
+        logger.info(f"Execution Time (Total): {np.sum(hamming_time_total)}s")
+        logger.info(f"Execution Time (Mean): {np.mean(hamming_time_total)}s")
+        logger.info(f"Execution Time (Standard Deviation): {np.std(hamming_time_total)}s")
+        logger.info(f"Memory Usage (Mean): {np.mean(hamming_memory_total)}MB")
+        logger.info(f"Memory Usage (Standard Deviation): {np.std(hamming_memory_total)}MB")
 
 
 def pretty_log_puzzle(puzzle: np.ndarray) -> None:
@@ -137,4 +146,5 @@ def pretty_log_puzzle(puzzle: np.ndarray) -> None:
         logger.debug(line)
 
 
-main()
+if __name__ == "__main__":
+    main()
