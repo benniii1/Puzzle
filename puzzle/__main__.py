@@ -31,40 +31,44 @@ def main():
     | CRITICAL   | 50             | logger.critical()|
     """
     logger.remove()  # Removes the default handler, so that we can set a log level without duplicating messages.
-    logger.add(sink=stderr, level="DEBUG")  # Configures the log handler.
+    logger.add(sink=stderr, level="INFO")  # Configures the log handler.
 
     logger.info("Let's start!")
 
     goal_state: np.ndarray = GenerateMatrix.generate_goal_state()
 
-#    manhattan_memory_usage = []
-#    hamming_memory_usage = []
+    logger.debug("Goal State:")
+    pretty_log_puzzle(goal_state)
 
-    manhattan_execution_time = []
-#    hamming_execution_time = []
+    #    manhattan_memory_usage = []
+    #    hamming_memory_usage = []
 
-    for _ in range(1):
+    count_solvable_puzzles: int = 0
+    manhattan_time_total: int = 0
+    hamming_time_total: int = 0
+    for _ in range(100):
+        logger.info(f"Run #{_}")
+        logger.info("-" * 40)
+
         random_state: np.ndarray = GenerateMatrix.generate_random_state()
 
         logger.debug("Random State:")
         pretty_log_puzzle(random_state)
 
-        logger.debug("Goal State:")
-        pretty_log_puzzle(goal_state)
-
         is_state_solvable: bool = is_solvable(random_state)
         logger.debug(f"Is Solvable: {is_state_solvable}")
 
         if is_solvable(random_state):
+            count_solvable_puzzles += 1
             logger.info("A* Search with Manhattan Distance Heuristic")
 
             manhattan_start_time = time.time()
             manhattan_dist_path = a_star_search(random_state, goal_state, HeuristicFunctions.manhattan_distance)
             manhattan_end_time = time.time()
-            manhattan_total_time = manhattan_end_time - manhattan_start_time
-            manhattan_execution_time.append(manhattan_total_time)
+            manhattan_time = manhattan_end_time - manhattan_start_time
+            manhattan_time_total += manhattan_time
 
-            logger.debug(f"Run Time: {manhattan_total_time}s")
+            logger.info(f"Run Time: {manhattan_time}s")
 
             """
             # Calculate memory usage
@@ -84,9 +88,10 @@ def main():
             hamming_start_time = time.time()
             hamming_displacement_path = a_star_search(random_state, goal_state, HeuristicFunctions.hamming_displacement)
             hamming_end_time = time.time()
-            hamming_total_time = hamming_end_time - hamming_start_time
+            hamming_time = hamming_end_time - hamming_start_time
+            hamming_time_total += hamming_time
 
-            logger.debug(f"Run Time: {hamming_total_time}s")
+            logger.info(f"Run Time: {hamming_time}s")
 
             """
             # Calculate memory usage
@@ -103,6 +108,13 @@ def main():
                 pretty_log_puzzle(state)
         else:
             logger.warning("The random state is not solvable.")
+
+    logger.info("-" * 40)
+    logger.info("-" * 40)
+    logger.info(f"Solvable Puzzles: {count_solvable_puzzles}")
+    logger.info(f"Manhattan Time Total: {manhattan_time_total}s")
+    logger.info(f"Hamming Time Total: {hamming_time_total}s")
+
 
 """
     logger.debug(f"Mean Memory Usage (Manhattan Distance Heuristic): {np.mean(manhattan_memory_usage)}MB")

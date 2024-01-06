@@ -57,7 +57,7 @@ def a_star_search(initial_state, goal_state, heuristic_function):
             while current_puzzle:
                 path.append((current_puzzle.state, current_puzzle.move))
                 current_puzzle = current_puzzle.parent
-            logger.debug(f"Number of Nodes Expanded: {len(closed_set)}")
+            logger.info(f"Number of Nodes Expanded: {len(closed_set)}")
             return path[::-1]
 
         successors = current_puzzle.generate_successors()
@@ -68,4 +68,3 @@ def a_star_search(initial_state, goal_state, heuristic_function):
                 heapq.heappush(open_set, successor)
 
     return None
-
