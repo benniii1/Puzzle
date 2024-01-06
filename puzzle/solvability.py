@@ -1,4 +1,8 @@
 def is_solvable(matrix) -> bool:
+    """
+    Determines if the given puzzle state is solvable, based on the number of inversions.
+    If the total number of inversions is even, that means that the puzzle is solvable
+    """
     inversion_count = 0
     row_major_order = [value for row in matrix for value in row if value != 0]
 
