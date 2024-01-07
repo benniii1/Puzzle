@@ -35,6 +35,9 @@ def main():
     logger.remove()  # Removes the default handler, so that we can set a log level without duplicating messages.
     logger.add(sink=stderr, level="INFO")  # Configures the log handler.
 
+    # Uncomment the following line to see the moves, but comment out line 36 before running this file.
+    # logger.add(sink=stderr, level="DEBUG")
+
     logger.info("Let's start!")
 
     goal_state: np.ndarray = GenerateMatrix.generate_goal_state()
