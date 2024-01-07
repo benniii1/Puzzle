@@ -9,7 +9,10 @@ from puzzle.solvability import is_solvable
 class TestAStarSearch(unittest.TestCase):
 
     def setUp(self):
-        # Set up common test variables
+        """
+        Set up common test variables.
+        Initializes initial and goal states for testing A* search algorithms.
+        """
         self.initial_state = GenerateMatrix.generate_random_state(seed=1)
         self.goal_state = GenerateMatrix.generate_goal_state()
 
@@ -17,6 +20,8 @@ class TestAStarSearch(unittest.TestCase):
         """
         Calls the A* search algorithm with the Manhattan Distance heuristic.
         Asserts that a solution is found and the last state in the solution path is the goal state.
+
+        :return: None
         """
 
         # Call A* search with Manhattan Distance heuristic
@@ -32,6 +37,8 @@ class TestAStarSearch(unittest.TestCase):
         """
         Calls the A* search algorithm with the Hamming Distance heuristic.
         Asserts that a solution is found and the last state in the solution path is the goal state.
+
+        :return: None
         """
 
         # Call A* search with Hamming Distance heuristic
@@ -47,6 +54,8 @@ class TestAStarSearch(unittest.TestCase):
         """
         Defines solvable and unsolvable puzzle instances.
         Calls the is_solvable function and asserts that solvable and unsolvable puzzles are correctly identified.
+
+        :return: None
         """
 
         # Define solvable and unsolvable puzzle instances
@@ -66,6 +75,8 @@ class TestAStarSearch(unittest.TestCase):
     def test_generate_matrix(self):
         """
         Calls the generate_random_state function with a specific seed and asserts that the generated matrix is not None.
+
+        :return: None
         """
 
         # Call generate_random_state with a specific seed
