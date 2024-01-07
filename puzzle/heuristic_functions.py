@@ -1,6 +1,4 @@
 import numpy as np
-from puzzle.generate_matrix import GenerateMatrix
-from puzzle.solvability import is_solvable
 
 
 class HeuristicFunctions:
@@ -8,6 +6,10 @@ class HeuristicFunctions:
     def manhattan_distance(state, goal) -> int:
         """
         Calculates the Manhattan Distance heuristic between the original state and the goal state
+
+        :param state: The current state of the puzzle.
+        :param goal: The goal state of the puzzle.
+        :return: The Manhattan Distance heuristic value.
         """
         distance = 0
         h = ""
@@ -24,6 +26,10 @@ class HeuristicFunctions:
     def hamming_displacement(state, goal) -> int:
         """
         Calculates the number of misplaced tiles heuristic (Hamming Distance) between two states
+
+        :param state: The current state of the puzzle.
+        :param goal: The goal state of the puzzle.
+        :return: The Hamming Distance heuristic value.
         """
         misplaced_tiles_count = 0
         for row in range(3):
