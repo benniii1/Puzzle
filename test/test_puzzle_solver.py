@@ -75,6 +75,8 @@ class TestAStarSearch(unittest.TestCase):
     def test_generate_matrix(self):
         """
         Calls the generate_random_state function with a specific seed and asserts that the generated matrix is not None.
+
+        :return: None
         """
 
         # Call generate_random_state with a specific seed
