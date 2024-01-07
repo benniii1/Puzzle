@@ -3,7 +3,7 @@ import numpy as np
 
 class GenerateMatrix:
     @staticmethod
-    def generate_goal_state():
+    def generate_goal_state() -> np.ndarray:
         """
         Generates the goal state matrix for the 8-puzzle problem
         """
